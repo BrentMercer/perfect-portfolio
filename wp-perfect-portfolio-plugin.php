@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name:	Perfect Portfolio
-Description:	Adds portfolio
-Plugin URI:		
+Plugin Name:	WP Perfect Portfolio Plugin
+Description:	Adds portfolio custom post type to WordPress
+Plugin URI:		http://brentmercer.com/wp-perfect-portfolio-plugin/
 Author:			Brent Mercer
 Author URI:     http://brentmercer.com
 Version:		1.0.0
 License:		GPLv2 or later
 License URI:	https://www.gnu.org/licenses/gpl-2.0.txt
-Text Domain:    perfect-portfolio
+Text Domain:    wp-perfect-portfolio-plugin
 Domain Path:    /languages
 
 Perfect Portfolio is free software: you can redistribute it and/or modify
@@ -33,18 +33,18 @@ if ( !defined( 'ABSPATH' ) ) exit;
 *
 *
 **/
-function pp_register_post_type(){
+function wpppp_register_post_type(){
 
 	$labels = array(
-		'name'               => _x( 'Portfolio', 'post type general name', 'perfect-portfolio' ),
-		'singular_name'      => _x( 'Portfolio Item', 'post type singular name', 'perfect-portfolio' ),
-		'menu_name'          => _x( 'Portfolio Items', 'admin menu', 'perfect-portfolio' ),
-		'name_admin_bar'     => _x( 'Portfolio Items', 'add new on admin bar', 'perfect-portfolio' ),
+		'name'               => _x( 'Portfolio', 'post type general name', 'wp-perfect-portfolio-plugin' ),
+		'singular_name'      => _x( 'Portfolio Item', 'post type singular name', 'wp-perfect-portfolio-plugin' ),
+		'menu_name'          => _x( 'Portfolio Items', 'admin menu', 'wp-perfect-portfolio-plugin' ),
+		'name_admin_bar'     => _x( 'Portfolio Items', 'add new on admin bar', 'wp-perfect-portfolio-plugin' ),
 	);
 
 	$args = array(
 		'labels'             => $labels,
-		'description'        => __( 'Description.', 'perfect-portfolio' ),
+		'description'        => __( 'Description.', 'wp-perfect-portfolio-plugin' ),
 		'public'             => true,
 		'publicly_queryable' => true,
 		'show_ui'            => true,
@@ -59,10 +59,10 @@ function pp_register_post_type(){
 		'menu_icon'			 => 'dashicons-screenoptions'
 	);
 
-	register_post_type( 'pp_portfolio', $args );
+	register_post_type( 'wpppp_portfolio', $args );
 
 }
-add_action( 'init', 'pp_register_post_type');
+add_action( 'init', 'wpppp_register_post_type');
 
 
 /*
@@ -70,12 +70,12 @@ add_action( 'init', 'pp_register_post_type');
 *
 *
 */
-function pp_create_taxonomy(){
+function wpppp_create_taxonomy(){
 
 	// Add new taxonomy, make it hierarchical (like categories)
 	$labels = array(
-		'name'              => _x( 'Item Types', 'taxonomy general name', 'perfect-portfolio' ),
-		'singular_name'     => _x( 'Item Type', 'taxonomy singular name', 'perfect-portfolio' ),
+		'name'              => _x( 'Item Types', 'taxonomy general name', 'wp-perfect-portfolio-plugin' ),
+		'singular_name'     => _x( 'Item Type', 'taxonomy singular name', 'wp-perfect-portfolio-plugin' ),
 	);
 
 	$args = array(
@@ -87,8 +87,8 @@ function pp_create_taxonomy(){
 		'rewrite'           => array( 'slug' => 'item type' ),
 	);
 
-	register_taxonomy( 'pp_item_type', 'pp_portfolio', $args );
+	register_taxonomy( 'pp_item_type', 'wpppp_portfolio', $args );
 
 }
 
-add_action( 'init', 'pp_create_taxonomy' );
+add_action( 'init', 'wpppp_create_taxonomy' );
