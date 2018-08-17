@@ -1,123 +1,71 @@
 <?php
 /*
- * Plugin Name:	WP Perfect Portfolio Plugin
- * Description:	Adds portfolio custom post type to WordPress
- * Plugin URI:	http://brentmercer.com/wp-perfect-portfolio-plugin/
- * Author:		Brent Mercer
- * Author URI:	http://brentmercer.com
- * Version:		1.0.0
- * License:		GPLv2 or later
- * License URI:	https://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:	wp-perfect-portfolio-plugin
- * Domain Path:	/languages
-
-Perfect Portfolio is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-any later version.
- 
-Perfect Portfolio is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
- 
-You should have received a copy of the GNU General Public License
-along with Perfect Portfolio. If not, see https://www.gnu.org/licenses/gpl-2.0.txt.
+Plugin Name: Movie Reviews
+Description: Movie Review post type with all the trimmings
+Author: Joe Chellman
+Author URI: http://www.example.org/
+Version: 1.0
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
-
-// Exit is accessed directly.
-if ( !defined( 'ABSPATH' ) ) exit;
 
 // required plugin class
 require_once dirname( __FILE__ ) . '/lib/class-tgm-plugin-activation.php';
 
-class WP_Perfect_Portfolio {
-	private static $_instance = null;
+class My_Movie_Reviews {
+	private static $instance;
 
-	const FIELD_PREFIX = 'bjm_';
-
+	const FIELD_PREFIX = 'jcmr_';
+	
 	// this needs to be hard-coded, but this serves as a reminder,
 	// and a find replace when searching and replacing
-	const TEXT_DOMAIN = 'bjm-portfolio-data';
+	const TEXT_DOMAIN = 'jc-movie-reviews';
 
-	public static function instance() {
-		if ( ! isset( self::$_instance ) ) {
-			self::$_instance = new self;
+	public static function getInstance() {
+		if (self::$instance == NULL) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+
+		return self::$instance;
 	}
+
 	private function __construct() {
-		// initialize Portfolio custom post type
-		add_action( 'init', 'WP_Perfect_Portfolio::wpppp_register_post_type' );
+		// initialize Movie Review custom post type
+		add_action('init', 'My_Movie_Reviews::register_post_type' );
 
 		// initialize custom fields from Metabox.io:
 		// first check for required plugin
 		add_action( 'tgmpa_register', array( $this, 'check_required_plugins' ) );
 		// then define the fields
 		add_filter( 'rwmb_meta_boxes', array( $this, 'metabox_custom_fields' ) );
-
-		// initialize taxonomy
-		add_action( 'init', array( $this, 'wpppp_create_taxonomy' ));
 	}
 
 	/**
-	* Register Portfolio post type.
-	*
-	*
-	**/
-	static function wpppp_register_post_type(){
-		$labels = array(
-			'name'               => _x( 'Portfolio', 'post type general name', 'wp-perfect-portfolio-plugin' ),
-			'singular_name'      => _x( 'Portfolio Item', 'post type singular name', 'wp-perfect-portfolio-plugin' ),
-			'menu_name'          => _x( 'Portfolio Items', 'admin menu', 'wp-perfect-portfolio-plugin' ),
-			'name_admin_bar'     => _x( 'Portfolio Items', 'add new on admin bar', 'wp-perfect-portfolio-plugin' ),
-		);
-		$args = array(
-			'labels'             => $labels,
-			'description'        => __( 'Description.', 'wp-perfect-portfolio-plugin' ),
-			'public'             => true,
-			'publicly_queryable' => true,
-			'show_ui'            => true,
-			'show_in_menu'       => true,
-			'query_var'          => true,
-			'rewrite'            => array( 'slug' => 'portfolio' ),
-			'capability_type'    => 'post',
-			'has_archive'        => true,
-			'hierarchical'       => false,
-			'menu_position'      => null,
-			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
-			'menu_icon'			 => 'dashicons-screenoptions'
-		);
-		register_post_type( 'wpppp_portfolio', $args );
-	}
-
-	/**
-	* Register Project Type taxonomy.
-	*
-	*
-	**/
-	function wpppp_create_taxonomy(){
-		// Add new taxonomy, make it hierarchical (like categories)
-		$labels = array(
-			'name'              => _x( 'Project Types', 'taxonomy general name', 'wp-perfect-portfolio-plugin' ),
-			'singular_name'     => _x( 'Project Types', 'taxonomy singular name', 'wp-perfect-portfolio-plugin' ),
-		);
-		$args = array(
-			'hierarchical'      => true,
-			'labels'            => $labels,
-			'show_ui'           => true,
-			'show_admin_column' => true,
-			'query_var'         => true,
-			'rewrite'           => array( 'slug' => 'item type' ),
-		);
-		register_taxonomy( 'wpppp_item_type', 'wpppp_portfolio', $args );
-	}
-
-	/**
-	 * Activate post type and flush rewrite rules.
+	 * Registers the Movie Review custom post type
+	 *
+	 * Defined statically for use in activation hook
 	 */
-	static function activate(){
-		self::wpppp_register_post_type();
+	public static function register_post_type() {
+		register_post_type('movie_review', array(
+			'labels' => array(
+				'name' => __('Movie Reviews'),
+				'singular_name' => __('Movie Review'),
+			),
+			'description' => __('Highly opinionated movie reviews'),
+			'supports' => array(
+				'title', 'editor', 'excerpt', 'author', 'revisions', 'thumbnail',
+			),
+			'public' => TRUE,
+			'menu_icon' => 'dashicons-format-video',
+			'menu_position' => 4,
+		));
+	}
+
+	/**
+	 * Activation hook (see register_activation_hook)
+	 */
+	public static function activate() {
+		self::register_post_type();
 		flush_rewrite_rules();
 	}
 
@@ -243,7 +191,7 @@ class WP_Perfect_Portfolio {
 }
 
 // initialize plugin
-add_action( 'plugins_loaded', 'WP_Perfect_Portfolio::instance' );
+My_Movie_Reviews::getInstance();
 
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
-register_activation_hook( __FILE__, 'WP_Perfect_Portfolio::activate' );
+register_activation_hook( __FILE__, 'My_Movie_Reviews::activate' );
