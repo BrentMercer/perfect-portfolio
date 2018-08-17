@@ -38,9 +38,10 @@ class WP_Perfect_Portfolio {
 	}
 	private function __construct() {
 		// place hooks here
-		add_action( 'init', 'wpppp_register_post_type');
-		add_action( 'init', 'wpppp_create_taxonomy' );
+		add_action( 'init', array( $this, 'wpppp_register_post_type' ));
+		add_action( 'init', array( $this, 'wpppp_create_taxonomy' ));
 	}
+
 	/**
 	* Register Portfolio post type.
 	*
@@ -70,28 +71,28 @@ class WP_Perfect_Portfolio {
 			'menu_icon'			 => 'dashicons-screenoptions'
 		);
 		register_post_type( 'wpppp_portfolio', $args );
+	}
 
 		/*
-		* Register Item Type Taxonomy.
+		* Register Project Type taxonomy.
 		*
 		*
 		*/
-		function wpppp_create_taxonomy(){
-			// Add new taxonomy, make it hierarchical (like categories)
-			$labels = array(
-				'name'              => _x( 'Item Types', 'taxonomy general name', 'wp-perfect-portfolio-plugin' ),
-				'singular_name'     => _x( 'Item Type', 'taxonomy singular name', 'wp-perfect-portfolio-plugin' ),
-			);
-			$args = array(
-				'hierarchical'      => true,
-				'labels'            => $labels,
-				'show_ui'           => true,
-				'show_admin_column' => true,
-				'query_var'         => true,
-				'rewrite'           => array( 'slug' => 'item type' ),
-			);
-			register_taxonomy( 'pp_item_type', 'wpppp_portfolio', $args );
-		}
+	function wpppp_create_taxonomy(){
+		// Add new taxonomy, make it hierarchical (like categories)
+		$labels = array(
+			'name'              => _x( 'Project Types', 'taxonomy general name', 'wp-perfect-portfolio-plugin' ),
+			'singular_name'     => _x( 'Project Types', 'taxonomy singular name', 'wp-perfect-portfolio-plugin' ),
+		);
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug' => 'item type' ),
+		);
+		register_taxonomy( 'wpppp_item_type', 'wpppp_portfolio', $args );
 	}
 }
 
