@@ -38,7 +38,7 @@ class WP_Perfect_Portfolio {
 	}
 	private function __construct() {
 		// place hooks here
-		add_action( 'init', array( $this, 'wpppp_register_post_type' ));
+		add_action( 'init', 'WP_Perfect_Portfolio::wpppp_register_post_type' );
 		add_action( 'init', array( $this, 'wpppp_create_taxonomy' ));
 	}
 
@@ -47,7 +47,7 @@ class WP_Perfect_Portfolio {
 	*
 	*
 	**/
-	function wpppp_register_post_type(){
+	static function wpppp_register_post_type(){
 		$labels = array(
 			'name'               => _x( 'Portfolio', 'post type general name', 'wp-perfect-portfolio-plugin' ),
 			'singular_name'      => _x( 'Portfolio Item', 'post type singular name', 'wp-perfect-portfolio-plugin' ),
@@ -73,11 +73,11 @@ class WP_Perfect_Portfolio {
 		register_post_type( 'wpppp_portfolio', $args );
 	}
 
-		/*
-		* Register Project Type taxonomy.
-		*
-		*
-		*/
+	/**
+	* Register Project Type taxonomy.
+	*
+	*
+	**/
 	function wpppp_create_taxonomy(){
 		// Add new taxonomy, make it hierarchical (like categories)
 		$labels = array(
@@ -94,6 +94,16 @@ class WP_Perfect_Portfolio {
 		);
 		register_taxonomy( 'wpppp_item_type', 'wpppp_portfolio', $args );
 	}
+
+	/**
+	*  Activate post type and flush rewrite rules.
+	**/
+	static function activate(){
+		self::wpppp_register_post_type();
+		flush_rewrite_rules();
+	}
 }
 
 add_action( 'plugins_loaded', 'WP_Perfect_Portfolio::instance' );
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+register_activation_hook( __FILE__, 'WP_Perfect_Portfolio::activate' );
